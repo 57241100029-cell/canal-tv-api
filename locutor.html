@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NVK TV - Locutor</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        .broadcaster-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            aspect-ratio: 16/9;
+        }
+
+        .video-preview {
+            width: 100%;
+            height: 100%;
+            background: #111;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #333;
+        }
+
+        .mic-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .settings-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 640px;
+            align-items: center;
+        }
+
+        select {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        /* Visualizador de Volumen */
+        .volume-meter-container {
+            width: 100%;
+            max-width: 640px;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: -10px;
+        }
+
+        .volume-meter-bar {
+            height: 100%;
+            width: 0%;
+            background: limegreen;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="brand">
+            <div class="logoMark">N</div>
+            <div class="titles">
+                <div class="title">NVK <span>TV</span> (Locutor)</div>
+                <div class="subtitle">Panel de Transmisión</div>
+            </div>
+        </div>
+        <div class="headerRight">
+            <div class="livePill">
+                <div class="dot"></div> EN VIVO
+            </div>
+            <div class="viewersPill">
+                👥 <span id="viewersCount">0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Panel del Locutor -->
+        <div class="playerCard">
+            <div class="broadcaster-controls">
+                <!-- VIDEO PREVIEW -->
+                <div class="video-container">
+                    <video id="localVideo" class="video-preview" autoplay playsinline muted></video>
+                    <div class="mic-status" id="micStatusIndicator">🎤 Muted</div>
+                </div>
+
+                <!-- MEDIDOR DE VOLUMEN -->
+                <div class="volume-meter-container">
+                    <div id="volumeMeter" class="volume-meter-bar"></div>
+                </div>
+
+                <div class="settings-row">
+                    <label>🎙️ Mic:</label>
+                    <select id="micSelect"></select>
+                </div>
+
+                <h1 style="font-size: 1.5rem; margin: 0;">Transmisión en Vivo</h1>
+                <p class="status-text">Estado: <span id="statusText">Desconectado</span></p>
+
+                <div class="controls-row">
+                    <button id="btnStart" class="btnPrimary" style="font-size: 1.1rem; padding: 12px 24px;">
+                        INICIAR TRANSMISIÓN
+                    </button>
+                    <button id="btnToggleMic" class="btnGhost" style="font-size: 1.1rem; padding: 12px 24px;" disabled>
+                        🔇 Activar Mic
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Sidebar -->
+        <div class="chatCard" id="chatSidebar">
+            <div class="chatHeader">
+                <span class="chatName">Chat en Vivo</span>
+                <span class="chatMeta">Mensajes recientes</span>
+            </div>
+
+            <div class="chatBody" id="chatBody"></div>
+
+            <div class="chatInputRow">
+                <input type="text" id="chatInput" placeholder="Escribe un mensaje..." autocomplete="off" />
+                <button id="chatSend" class="sendBtn">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="locutor.js"></script>
+</body>
+
+</html>

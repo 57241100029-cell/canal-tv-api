@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NVK TV - En Vivo</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .listener-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .video-stream {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      max-height: 70vh;
+      /* Limitar altura en pantallas grandes */
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      transition: opacity 0.3s;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-big-play {
+      font-size: 2rem;
+      padding: 20px 40px;
+      border-radius: 50px;
+      background: rgba(229, 9, 20, 0.9);
+      border: 2px solid #fff;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.2s;
+    }
+
+    .btn-big-play:hover {
+      transform: scale(1.05);
+      background: #ff0a1a;
+    }
+
+    /* Botón Unmute discreto si arranca muteado */
+    .unmute-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 5;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logoMark">N</div>
+      <div class="titles">
+        <div class="title">NVK <span>TV</span></div>
+        <div class="subtitle">Transmisión en Vivo</div>
+      </div>
+    </div>
+    <div class="headerRight">
+      <div class="livePill" id="liveIndicator" style="display:none;">
+        <div class="dot"></div> EN VIVO
+      </div>
+      <div class="viewersPill">
+        👥 <span id="viewersCount">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- Player -->
+    <div class="playerCard">
+      <div class="listener-controls">
+
+        <!-- VIDEO PLAYER -->
+        <!-- 'autoplay' y 'muted' para intentar reproducir solo video al inicio si browser bloquea audio -->
+        <video id="remoteVideo" class="video-stream" playsinline autoplay muted></video>
+
+        <button id="unmuteBtn" class="unmute-btn">🔇 CLICK PARA ACTIVAR SONIDO</button>
+
+        <!-- OVERLAY: Botón Play / Estado -->
+        <div id="overlay" class="overlay">
+          <h2 id="streamStatus" style="margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Esperando señal...
+          </h2>
+          <button id="btnListen" class="btn-big-play hidden">
+            ▶ VER Y ESCUCHAR
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chat Sidebar -->
+    <div class="chatCard" id="chatSidebar">
+      <div class="chatHeader">
+        <span class="chatName">Chat en Vivo</span>
+      </div>
+
+      <div class="chatBody" id="chatBody"></div>
+
+      <div class="chatInputRow">
+        <input type="text" id="chatName" placeholder="Tu nombre..." style="width: 30%; margin-right: 5px;" />
+        <input type="text" id="chatInput" placeholder="Mensaje..." autocomplete="off" />
+        <button id="chatSend" class="sendBtn">Enviar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="oyente.js"></script>
+</body>
+
+</html>
